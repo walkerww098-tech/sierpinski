@@ -31,11 +31,14 @@
                         🎨 パラメーター
                     </v-card-title>
                     <v-divider class="mb-4"></v-divider>
+                    <!-- サイズを変えると表示が’こわれる。またこんど。
                     <div class="text-caption mb-1">画像サイズ: {{ svgsize }}</div>
                     <v-slider v-model="svgsize" :min="100" :max="1000" step="10" thumb-label color="primary"
                         @update:modelValue="on_click" />
+                    -->
+
                     <div class="text-caption mb-1">Depth : {{ idepth }}</div>
-                    <v-slider v-model="idepth" :min="2" :max="7" step="1" thumb-label color="primary"
+                    <v-slider v-model="idepth" :min="2" :max="6" step="1" thumb-label color="primary"
                         @update:modelValue="on_click" />
                     <button @click="download">ダウンロード</button>
                 </v-card>
@@ -68,11 +71,13 @@ const idepth = ref(4);
 
 onMounted(() => {
     elements.value = [];
+    lines.value = [];
     draw(offset_x, offset_y, carpet_size, idepth.value);
 });
 
 const on_click = () => {
     elements.value = [];
+    lines.value = [];
     draw(offset_x, offset_y, carpet_size, idepth.value);
 }
 
