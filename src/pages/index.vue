@@ -9,6 +9,7 @@
                     <v-divider class="mb-4"></v-divider>
                     <div class="d-flex justify-center align-center fill-height mt-4" style="background-color: black;">
                         <svg ref="svgRef" :width="svgsize" :height="svgsize" :viewBox="viewBox">
+                            <rect x="0" y="0" :width="svgsize" :height="svgsize" fill="#000000" />
                             <template v-for="p in elements">
                                 <rect :x="p.x" :y="p.y" :width="p.width" :height="p.height" :fill="p.fill" />
                             </template>
