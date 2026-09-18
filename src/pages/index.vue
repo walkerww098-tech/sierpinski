@@ -12,6 +12,14 @@
                             <template v-for="p in elements">
                                 <rect :x="p.x" :y="p.y" :width="p.width" :height="p.height" :fill="p.fill" />
                             </template>
+                            <template v-for="p in rectangles">
+                                <rect :x="p.x" :y="p.y" :width="p.width" :height="p.height" :fill="p.fill"
+                                    :stroke="p.stroke" :stroke-width="p.stroke_width" />
+                            </template>
+                            <template v-for="p in lines">
+                                <line :x1="p.x1" :y1="p.y1" :x2="p.x2" :y2="p.y2" :stroke="p.stroke"
+                                    :stroke-width="p.stroke_width" />
+                            </template>
                         </svg>
                     </div>
                 </v-card>
@@ -26,8 +34,8 @@
                     <div class="text-caption mb-1">画像サイズ: {{ svgsize }}</div>
                     <v-slider v-model="svgsize" :min="100" :max="1000" step="10" thumb-label color="primary"
                         @update:modelValue="on_click" />
-                    <div class="text-caption mb-1">Depth : {{ depth }}</div>
-                    <v-slider v-model="depth" :min="2" :max="7" step="1" thumb-label color="primary"
+                    <div class="text-caption mb-1">Depth : {{ idepth }}</div>
+                    <v-slider v-model="idepth" :min="2" :max="7" step="1" thumb-label color="primary"
                         @update:modelValue="on_click" />
                     <button @click="download">ダウンロード</button>
                 </v-card>
@@ -37,7 +45,7 @@
 </template>
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue';
-import type { Circle, Rect } from '@/lib/consts';
+import type { Circle, Line, Point, Rect } from '@/lib/consts';
 import { useApplicationStore } from '@/stores/applicationStore';
 
 const app = useApplicationStore();
@@ -49,21 +57,23 @@ const viewBox = computed(() => {
     return "0 0  " + svgsize.value + " " + svgsize.value;
 });
 const svgRef = ref<SVGGraphicsElement | null>(null)
+const rectangles = ref<Rect[]>([]);
+const lines = ref<Line[]>([]);
 
 // 1. 設定値
 const offset_x = 0;
 const offset_y = 0;
 const carpet_size = 600;
-const depth = ref(4);
+const idepth = ref(4);
 
 onMounted(() => {
     elements.value = [];
-    draw(offset_x, offset_y, carpet_size, depth.value);
+    draw(offset_x, offset_y, carpet_size, idepth.value);
 });
 
 const on_click = () => {
     elements.value = [];
-    draw(offset_x, offset_y, carpet_size, depth.value);
+    draw(offset_x, offset_y, carpet_size, idepth.value);
 }
 
 const download = () => {
@@ -101,6 +111,13 @@ const draw = (x: number, y: number, size: number, depth: number) => {
     const center_y = y + next_size
     // 中央の正方形を白(#ffffff)で塗りつぶすタグを追加
     elements.value.push({ x: center_x, y: center_y, width: next_size, height: next_size, fill: "#ffffff", stroke: "white", stroke_width: 1 });
+    if (idepth.value == depth) {
+        rectangles.value.push({ x: 0, y: 0, width: svgsize.value, height: svgsize.value, fill: "none", stroke: "white", stroke_width: 2 });
+        lines.value.push({ x1: center_x, y1: 0, x2: center_x, y2: svgsize.value, stroke: "white", stroke_width: 2 });
+        lines.value.push({ x1: center_x + next_size, y1: 0, x2: center_x + next_size, y2: svgsize.value, stroke: "white", stroke_width: 2 });
+        lines.value.push({ x1: 0, y1: center_y, x2: svgsize.value, y2: center_y, stroke: "white", stroke_width: 2 });
+        lines.value.push({ x1: 0, y1: center_y + next_size, x2: svgsize.value, y2: center_y + next_size, stroke: "white", stroke_width: 2 });
+    }
 
     // 上段3つ
     draw(x, y, next_size, depth - 1);
