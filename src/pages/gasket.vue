@@ -122,7 +122,7 @@ const downloadSvg = () => {
     // 4. 一時的なダウンロード用のリンクを作成してクリック
     const link = document.createElement('a')
     link.href = url
-    link.download = `fol-${Date.now()}.svg` // ファイル名
+    link.download = `sierpinski-gasket-${Date.now()}.svg` // ファイル名
     document.body.appendChild(link)
     link.click()
     // 5. 後片付け（メモリ解放と要素削除）
@@ -162,7 +162,7 @@ const downloadPng = () => {
             // 6. ダウンロード用のリンクを作成してクリック
             const link = document.createElement('a')
             link.href = pngUrl
-            link.download = `fol-${Date.now()}.png`
+            link.download = `sierpinski-gasket-${Date.now()}.png`
             document.body.appendChild(link)
             link.click()
             // 7. 後片付け

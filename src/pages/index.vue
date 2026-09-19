@@ -139,7 +139,7 @@ const downloadSvg = () => {
     // 4. 一時的なダウンロード用のリンクを作成してクリック
     const link = document.createElement('a')
     link.href = url
-    link.download = `fol-${Date.now()}.svg` // ファイル名
+    link.download = `sierpinski-carpet-${Date.now()}.svg`
     document.body.appendChild(link)
     link.click()
     // 5. 後片付け（メモリ解放と要素削除）
@@ -148,26 +148,21 @@ const downloadSvg = () => {
 }
 
 const downloadPng = () => {
-    if (!svgRef.value) return
-
+    if (!svgRef.value)
+        return
     // 1. SVGのDOMを文字列（XML）に変換
     const serializer = new XMLSerializer()
     let svgString = serializer.serializeToString(svgRef.value)
-
     // 名前の空間の修正（既存のコードの修正：正しいURLに変更）
     if (!svgString.match(/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)) {
         svgString = svgString.replace(/^<svg/, '<svg xmlns="http://w3.org"');
     }
-
     // 2. SVGのサイズを取得（Canvasのサイズ合わせ用）
-    const rect = svgRef.value.getBoundingClientRect()
-    const width = rect.width || 500  // フォールバック用のサイズ
-    const height = rect.height || 500
-
+    const width = svgsize.value;
+    const height = svgsize.value;
     // 3. BlobおよびURLを作成
     const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' })
     const svgUrl = URL.createObjectURL(blob)
-
     // 4. Imageオブジェクトを使ってCanvasに描画
     const img = new Image()
     img.onload = () => {
@@ -176,21 +171,17 @@ const downloadPng = () => {
         canvas.width = width
         canvas.height = height
         const ctx = canvas.getContext('2d')
-
         if (ctx) {
             // 背景を透明（または白）にしてSVGを描画
             ctx.drawImage(img, 0, 0, width, height)
-
             // 5. CanvasからPNGのData URLを生成
             const pngUrl = canvas.toDataURL('image/png')
-
             // 6. ダウンロード用のリンクを作成してクリック
             const link = document.createElement('a')
             link.href = pngUrl
-            link.download = `fol-${Date.now()}.png`
+            link.download = `sierpinski-carpet-${Date.now()}.png`
             document.body.appendChild(link)
             link.click()
-
             // 7. 後片付け
             document.body.removeChild(link)
         }
